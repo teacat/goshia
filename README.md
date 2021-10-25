@@ -18,7 +18,7 @@ $ go get github.com/teacat/goshia/v3
 // 初始化 Gorm 至資料庫的連線。
 db, err := gorm.Open(mysql.Open(dsn))
 if err != nil {
-    log.Fatalf(err)
+    log.Fatal(err)
 }
 // 將 Gorm 帶入給 Goshia 並初始化一個輔助函式。
 goshia := goshia.New(db)
