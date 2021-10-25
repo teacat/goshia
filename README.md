@@ -44,7 +44,7 @@ err := goshia.Query(rushia.NewQuery("Users").Where("user_id = ?", ColumnUserID, 
 
 ```go
 var users []User
-count, err := goshia.Query(rushia.NewQuery("Users").Limit(10, 20).Select(), &users)
+count, err := goshia.QueryCount(rushia.NewQuery("Users").Limit(10, 20).Select(), &users)
 // 等效於：SELECT * FROM Users LIMIT 10, 20
 // 等效於：SELECT COUNT(*) FROM Users
 ```
@@ -55,7 +55,7 @@ count, err := goshia.Query(rushia.NewQuery("Users").Limit(10, 20).Select(), &use
 
 ```go
 var user User
-affectedRows, err := goshia.Query(rushia.NewQuery("Users").Where("user_id = ?", 30).Update(user))
+affectedRows, err := goshia.Exec(rushia.NewQuery("Users").Where("user_id = ?", 30).Update(user))
 // 等效於：UPDATE Users SET ... WHERE `user_id` = ?
 ```
 
@@ -65,7 +65,7 @@ affectedRows, err := goshia.Query(rushia.NewQuery("Users").Where("user_id = ?", 
 
 ```go
 var user User
-id, affectedRows, err := goshia.Query(rushia.NewQuery("Users").Insert(user))
+id, affectedRows, err := goshia.ExecID(rushia.NewQuery("Users").Insert(user))
 // 等效於：INSERT INTO Users SET ...
 ```
 
