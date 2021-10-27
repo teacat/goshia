@@ -51,12 +51,22 @@ count, err := goshia.QueryCount(rushia.NewQuery("Users").Limit(10, 20).Select(),
 
 ### 執行（Exec）
 
-執行 `DELETE` 或 `UPDATE`…等語法時，可以使用 `Exec` 執行並且取得影響的筆數為何。
+執行 `DELETE` 或 `UPDATE`…等語法時，可以使用 `Exec` 執行。
 
 ```go
 var user User
-affectedRows, err := goshia.Exec(rushia.NewQuery("Users").Where("user_id = ?", 30).Update(user))
-// 等效於：UPDATE Users SET ... WHERE `user_id` = ?
+err := goshia.Exec(rushia.NewQuery("Users").Where("user_id = ?", 30).Update(user))
+// 等效於：UPDATE Users SET ... WHERE user_id = ?
+```
+
+### 執行與筆數（ExecAffected）
+
+執行時能夠取得影響的筆數為何。
+
+```go
+var user User
+affectedRows, err := goshia.ExecAffected(rushia.NewQuery("Users").Where("user_id = ?", 10).Delete())
+// 等效於：DELETE FROM Users WHERE user_id = ?
 ```
 
 ### 執行與編號（ExecID）
@@ -65,7 +75,7 @@ affectedRows, err := goshia.Exec(rushia.NewQuery("Users").Where("user_id = ?", 3
 
 ```go
 var user User
-id, affectedRows, err := goshia.ExecID(rushia.NewQuery("Users").Insert(user))
+id, err := goshia.ExecID(rushia.NewQuery("Users").Insert(user))
 // 等效於：INSERT INTO Users SET ...
 ```
 

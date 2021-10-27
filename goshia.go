@@ -46,7 +46,15 @@ func (g *Goshia) QueryCount(q *rushia.Query, dest interface{}) (count int, err e
 }
 
 // Exec
-func (g *Goshia) Exec(q *rushia.Query) (affectedRows int, err error) {
+func (g *Goshia) Exec(q *rushia.Query) (err error) {
+	query, params := rushia.Build(q)
+	result := g.Gorm.Exec(query, params...)
+	err = result.Error
+	return
+}
+
+// ExecAffected
+func (g *Goshia) ExecAffected(q *rushia.Query) (affectedRows int, err error) {
 	query, params := rushia.Build(q)
 	result := g.Gorm.Exec(query, params...)
 	affectedRows = int(result.RowsAffected)
@@ -55,7 +63,7 @@ func (g *Goshia) Exec(q *rushia.Query) (affectedRows int, err error) {
 }
 
 // ExecID
-func (g *Goshia) ExecID(q *rushia.Query) (id int, affectedRows int, err error) {
+func (g *Goshia) ExecID(q *rushia.Query) (id int, err error) {
 	query, params := rushia.Build(q)
 
 	err = g.Gorm.Transaction(func(tx *gorm.DB) error {
