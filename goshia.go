@@ -12,9 +12,17 @@ var (
 	ErrNotTransaction = errors.New("goshia: processing non-transaction")
 )
 
+type Type int
+
+const (
+	TypeMySQL Type = iota + 1
+	TypeSQLite
+)
+
 // Goshia
 type Goshia struct {
 	Gorm          *gorm.DB
+	Type          Type
 	isTransaction bool
 }
 
@@ -24,8 +32,13 @@ type Transaction struct {
 
 // New
 func New(g *gorm.DB) *Goshia {
+	typ := TypeMySQL
+	if g.Dialector.Name() == "sqlite" {
+		typ = TypeSQLite
+	}
 	return &Goshia{
 		Gorm: g,
+		Type: typ,
 	}
 }
 
@@ -70,8 +83,15 @@ func (g *Goshia) ExecID(q *rushia.Query) (id int, err error) {
 		if err := tx.Exec(query, params...).Error; err != nil {
 			return err
 		}
-		if err := tx.Raw(`SELECT LAST_INSERT_ID()`).Scan(&id).Error; err != nil {
-			return err
+		switch g.Type {
+		case TypeMySQL:
+			if err := tx.Raw(`SELECT LAST_INSERT_ID()`).Scan(&id).Error; err != nil {
+				return err
+			}
+		case TypeSQLite:
+			if err := tx.Raw(`SELECT LAST_INSERT_ROWID()`).Scan(&id).Error; err != nil {
+				return err
+			}
 		}
 		return nil
 	}, nil)
