@@ -167,6 +167,16 @@ func Int(v int) *int {
 	return &v
 }
 
+// SliceInt 會回傳一個指針切片正整數，這用來填補 SQL 中的 Nullable 欄位。
+func SliceInt(v []int) *[]int {
+	return &v
+}
+
+// SliceString 會回傳一個指針切片字串，這用來填補 SQL 中的 Nullable 欄位。
+func SliceString(v []string) *[]string {
+	return &v
+}
+
 // Float64 會回傳一個指針浮點數，這用來填補 SQL 中的 Nullable 欄位。
 func Float64(v float64) *float64 {
 	return &v
