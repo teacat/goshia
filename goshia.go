@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	ErrAlreadyBegun   = errors.New("goshia: transaction has already begun")
 	ErrNotTransaction = errors.New("goshia: processing non-transaction")
 )
 
@@ -108,6 +109,17 @@ func (g *Goshia) Transaction(handler func(tx *Goshia) error) error {
 	})
 }
 
+// Begin
+func (g *Goshia) Begin() *Goshia {
+	if g.isTransaction {
+		panic(ErrAlreadyBegun)
+	}
+	return &Goshia{
+		Gorm:          g.Gorm.Begin(),
+		isTransaction: true,
+	}
+}
+
 // Rollback
 func (g *Goshia) Rollback() *Goshia {
 	if !g.isTransaction {
@@ -137,7 +149,7 @@ func (g *Goshia) Commit() *Goshia {
 	}
 	return &Goshia{
 		Gorm:          g.Gorm.Commit(),
-		isTransaction: true,
+		isTransaction: false,
 	}
 }
 
@@ -148,7 +160,7 @@ func (g *Goshia) SavePoint(name string) *Goshia {
 	}
 	return &Goshia{
 		Gorm:          g.Gorm.SavePoint(name),
-		isTransaction: true,
+		isTransaction: false,
 	}
 }
 
